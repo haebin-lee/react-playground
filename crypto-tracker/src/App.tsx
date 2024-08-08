@@ -1,5 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 import Router from "./Router";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
@@ -52,9 +53,11 @@ table {
   box-sizing: border-box;
 }
 body {
+	font-weight: 300;
   font-family: "Source Code Pro", sans-serif;
   background: ${(props) => props.theme.bgColor};
   color: ${(props) => props.theme.textColor};
+	line-height: 1.2;
 }
 a {
   text-decoration: none;
@@ -67,6 +70,7 @@ function App() {
     <>
       <GlobalStyle />
       <Router />
+      <ReactQueryDevtools initialIsOpen={true} />
     </>
   );
 }
