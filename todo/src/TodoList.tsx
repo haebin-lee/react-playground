@@ -1,76 +1,28 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-
-// function ToDoList() {
-//   const [todo, setTodo] = useState("");
-//   const onChange = (event: React.FormEvent<HTMLInputElement>) => {
-//     const {
-//       currentTarget: { value },
-//     } = event;
-//     setTodo(value);
-//   };
-//   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-//     event.preventDefault();
-//   };
-//   return (
-//     <div>
-//       <form onSubmit={onSubmit}>
-//         <input onChange={onChange} value={todo} placeholder="Write a to do " />
-//         <button>Add</button>
-//       </form>
-//     </div>
-//   );
-// }
-
-interface IForm {
-  email: string;
-  firstName: string;
-  extraError?: string;
-}
+import { useRecoilState, useRecoilValue } from "recoil";
+import { categoryState, CategoryType, todoSelector } from "./atom";
+import CreateTodo from "./components/CreateTodo";
+import Todo from "./components/Todo";
 
 function ToDoList() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<IForm>();
-  const onValid = (data: any) => {
-    console.log(data);
-    setError("extraError", { message: "Server is shut down." });
+  const todos = useRecoilValue(todoSelector);
+  const [category, setCategory] = useRecoilState(categoryState);
+  const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
+    setCategory(event.currentTarget.value as any);
   };
-  console.log(errors);
-
+  console.log(category);
   return (
     <div>
-      <form
-        style={{ display: "flex", flexDirection: "column" }}
-        onSubmit={handleSubmit(onValid)}
-      >
-        <input
-          {...register("email", {
-            required: "Email is required",
-            pattern: {
-              value: /^[a-zA-Z0-9._%+-]+@gmail.com$/,
-              message: "Only gmail.com is allowed",
-            },
-          })}
-          placeholder="Email"
-        />
-        <span>{errors?.email?.message?.toString()}</span>
-        <input
-          {...register("firstName", {
-            validate: {
-              noLucy: (v) => (!v.includes("lucy") ? "No lucy includes" : true),
-            },
-          })}
-          placeholder="First Name"
-        />
-        <span>{errors?.firstName?.message?.toString()}</span>
-
-        <button>Add</button>
-        <span>{errors?.extraError?.message?.toString()}</span>
-      </form>
+      <h1>Todo List</h1>
+      <hr />
+      <select onInput={onInput}>
+        <option value={CategoryType.TODO}>To Do</option>
+        <option value={CategoryType.DOING}>Doing</option>
+        <option value={CategoryType.DONE}>DONE</option>
+      </select>
+      <CreateTodo />
+      {todos?.map((t) => (
+        <Todo key={t.id} {...t} />
+      ))}
     </div>
   );
 }
